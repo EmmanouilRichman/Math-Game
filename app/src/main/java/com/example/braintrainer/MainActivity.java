@@ -32,12 +32,11 @@ public class MainActivity extends AppCompatActivity {
     int numberOfProblems;
     int correctAnswers;
     int wrongAnswers;
-    int numberOfChoices = 4;
     int totalTime;
 
     public void gameState(View view){
         if(playing == false){
-            numberOfProblems = 0;
+           numberOfProblems = 0;
             correctAnswers = 0;
             wrongAnswers = 0;
             totalTime = 30;
