@@ -45,14 +45,13 @@ public class MainActivity extends AppCompatActivity {
         else{
             stop();
         }
-
     }
+
 
 
     public void startGame(){
 
       playing = true;
-       percentageView.setText("0%");
        gameStartStop.setVisibility(View.INVISIBLE);
        gameStartStop.setClickable(false);
 
@@ -90,5 +89,8 @@ public class MainActivity extends AppCompatActivity {
         correctView = (TextView) findViewById(R.id.correctView);
         gameStartStop = (Button) findViewById(R.id.gameStartStop);
         gameStartStop.setText("Play");
+        percentageView.setText("0%");
+        timerView.setText("0s");
+
     }
 }
