@@ -2,14 +2,15 @@ package com.example.braintrainer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     TextView answer3;
     TextView answer4;
     Button gameStartStop;
+    DecimalFormat df;
 
     //Timer
     CountDownTimer timer;
@@ -37,20 +39,24 @@ public class MainActivity extends AppCompatActivity {
 
 
     //Variables for keeping track of score;
-    int numberOfProblems;
-    int correctAnswers;
-    int wrongAnswers;
+    double numberOfProblems;
+    double correctAnswers = 0;
+    double percentageCorrect = 0;
     int totalTime;
     int correctAnswer;
+    int answerLocation;
     Random randomNum;
     String actualOperation = "";
+
+    //Media
+    MediaPlayer mediaPlayer;
 
     public void gameState(View view){
         if(playing == false){
            numberOfProblems = 0;
            correctAnswers = 0;
-           wrongAnswers = 0;
            totalTime = 30;
+           percentageView.setText("%");
            startGame();
         }
         else
@@ -59,8 +65,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void answerClick(View view){
+        numberOfProblems++;
+        if(allViews.get(answerLocation).getTag().toString().equals(view.getTag().toString()))
+        {
+            correctAnswers++;
+            correctView.setText("Correct!");
+        }
+        else{
+            correctView.setText("Wrong!!");
+        }
+
+        percentageCorrect = Double.valueOf(df.format(correctAnswers / numberOfProblems));
+        percentageView.setText(Double.toString( (percentageCorrect * 100)) + "%");
+        setUp();
+
+
+    }
+
     public void startGame(){
         playing = true;
+        correctView.setText("");
         gameStartStop.setVisibility(View.INVISIBLE);
         gameStartStop.setClickable(false);
         setUp();
@@ -75,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
            @Override
            public void onFinish() {
                stop();
+               mediaPlayer.start();
            }
        }.start();
 
@@ -84,8 +110,10 @@ public class MainActivity extends AppCompatActivity {
     public void stop(){
        playing = false;
        actualOperation = "";
-       correctAnswer = 0;
+       correctAnswers = 0;
+       numberOfProblems = 0;
        gameStartStop.setText("Play Again?");
+       correctView.setText("");
        gameStartStop.setClickable(true);
        gameStartStop.setVisibility(View.VISIBLE);
     }
@@ -110,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         correctAnswer = getAnswer(firstNum, secondNum);
 
         //Put correct answer into random view
-        int answerLocation = randomNum.nextInt(4 - 0) + 0;
+        answerLocation = randomNum.nextInt(4 - 0) + 0;
         allViews.get(answerLocation).setText(String.valueOf(correctAnswer));
 
         //Fill rest of answer views
@@ -144,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         timerView = (TextView) findViewById(R.id.timerView);
         problemView = (TextView) findViewById(R.id.problemView);
         percentageView = (TextView) findViewById(R.id.percentageView);
@@ -157,6 +186,9 @@ public class MainActivity extends AppCompatActivity {
         gameStartStop.setText("Play");
         percentageView.setText("0%");
         timerView.setText("0s");
+        df = new DecimalFormat("#.##");
+        correctView.setClickable(false);
+        mediaPlayer = MediaPlayer.create(this, R.raw.horn);
 
         //adding answer views to array
         allViews.add(answer1);
